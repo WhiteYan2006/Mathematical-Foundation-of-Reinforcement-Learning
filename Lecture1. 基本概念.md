@@ -3,12 +3,15 @@ date: 2026-01-28
 tags:
   - 强化学习
 ---
+
+![[Chapter_1.pdf]]
+
 # Lecture 1: Basic Concepts in Reinforcement Learning
 
 > [!info] 学习导航
 > * **前置知识**: 概率论基础（条件概率、期望）。
 > * **核心目标**: 理解 Agent 如何通过与 Environment 交互，最大化长期累积奖励。
-> * **关联章节**: 为 [[2 贝尔曼公式]] 奠定符号基础。
+> * **关联章节**: 为 [[Lecture2. 贝尔曼公式]] 奠定符号基础。
 
 ## 1. 核心直觉 (Intuition)
 

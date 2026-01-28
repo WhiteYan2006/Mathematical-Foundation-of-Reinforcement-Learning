@@ -1,1 +1,2 @@
 - 【【强化学习的数学原理】课程：从零开始到透彻理解（完结）】 https://www.bilibili.com/video/BV1sd4y167NS/?share_source=copy_web&vd_source=3b49aab3845ae3ffb2f6887d5dbb0d7c
+- 虽说是markdown，最好使用obsidian打开，内置callout语法
