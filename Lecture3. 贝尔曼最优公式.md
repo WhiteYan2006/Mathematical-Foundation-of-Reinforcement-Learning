@@ -113,6 +113,28 @@ $$v = \max_{\pi} (r_{\pi} + \gamma P_{\pi} v)$$
 > [!important] 结论
 > 贝尔曼最优方程**一定有解**，解是**唯一的**，且可以通过**迭代法**求解。
 
+#### 3.3.1 证明 BOE 是压缩映射
+
+书中定义算子 $f(v) = \max_{\pi} (r_{\pi} + \gamma P_{\pi} v)$。我们需要证明它在 $L_{\infty}$ 范数（最大范数）下是压缩的。
+
+> [!math] 证明摘要 (Proof Sketch)
+> 
+> 目标：证明 $\|f(u) - f(v)\|_{\infty} \le \gamma \|u - v\|_{\infty}$。
+> 
+> 1. 利用不等式 $|\max_a x_a - \max_a y_a| \le \max_a |x_a - y_a|$。
+>     
+> 2. 展开 $f(u)$ 和 $f(v)$ 的第 $s$ 个分量差的绝对值：
+>     
+>     $$\begin{aligned} | [f(u)]_s - [f(v)]_s | &= | \max_a (r_a + \gamma \sum P_{sa} u) - \max_a (r_a + \gamma \sum P_{sa} v) | \\ &\le \max_a | \gamma \sum_{s'} p(s'|s,a) (u(s') - v(s')) | \\ &\le \gamma \max_a \sum_{s'} p(s'|s,a) | u(s') - v(s') | \end{aligned}$$
+>     
+> 3. 由于 $| u(s') - v(s') | \le \|u - v\|_{\infty}$，且 $\sum_{s'} p(s'|s,a) = 1$ (概率和为1)：
+>     
+>     $$\le \gamma \max_a \left( \|u - v\|_{\infty} \cdot 1 \right) = \gamma \|u - v\|_{\infty}$$
+>     
+> 4. 对所有 $s$ 取最大值，得证。
+>     
+> 
+> 结论：BOE 的算子 $f$ 是收缩因子为 $\gamma$ 的压缩映射。
 ---
 
 ## 4. 求解 BOE：值迭代算法 (Value Iteration)
@@ -158,8 +180,27 @@ $$\pi^*(a|s) = \begin{cases} 1 & a = \arg\max_{a} q^*(s,a) \\ 0 & \text{otherwis
 * **仿射变换不变性 (Affine Transformation)**：
     如果对所有奖励进行变换 $r' = ar + b$ (其中 $a > 0$)，最优策略**保持不变**。
     * *原因*：新的最优价值 $v'$ 只是原价值 $v^*$ 的线性变换：$v' = av^* + \frac{b}{1-\gamma}\mathbf{1}$。比较大小时，相对顺序不变。
+#### 5.2.1 奖励函数的仿射变换 (Affine Transformation)
+
+这是一个重要的理论性质。
+
+> [!example] 定理：奖励不变性
+> 
+> 如果我们将所有奖励 $r$ 进行仿射变换：
+> 
+> $$r' = \alpha r + \beta, \quad (\alpha > 0)$$
+> 
+> 那么**最优策略保持不变**。
+> 
+> _证明思路_：新的最优价值函数 $v'^*$ 将是原价值函数的线性变换：$v'^* = \alpha v^* + \frac{\beta}{1-\gamma} \mathbf{1}$。
+> - $\mathbf{1}=[1,1,\dots,1]^T$
+> 由于 $v'$ 只是对 $v$ 进行了缩放和平移，数值之间的大小关系（偏序）没有改变，因此 $\arg\max$ 选出的动作（即最优策略）依然相同。
+
 
 ### 5.3 为什么不走“无意义的弯路”？
+> [!note] 为什么不走“无意义的弯路”？
+> 
+> 即使每步奖励为 0，最优策略也不会绕路。这是因为折扣因子 $\gamma < 1$ 的存在。推迟获得目标奖励 $r_{goal}$ 会导致其现值 $r_{goal} \cdot \gamma^t$ 衰减。因此，**最短路径**自然成为最优解。
 
 在相关的例子中，即使在这个 Grid World 中每走一步没有显式的惩罚（reward=0），最优策略也不会在原地转圈或绕远路。
 * **原因**：只要 $\gamma < 1$，推迟到达目标（获取正奖励）会因为折扣因子 $\gamma^t$ 而导致总回报降低。

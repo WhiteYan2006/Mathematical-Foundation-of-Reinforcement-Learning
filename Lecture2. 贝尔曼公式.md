@@ -137,18 +137,12 @@ $$\begin{aligned} \mathbb{E}[G_{t+1} | S_t = s] &= \sum_{s'} \left( \sum_{a} \pi
 
 ### 4.1 定义向量和矩阵
 
-1. **状态价值向量** $v_{\pi}$:
-    $$v_{\pi} = [v_{\pi}(s_1), v_{\pi}(s_2), \dots, v_{\pi}(s_n)]^T$$
+1. **状态价值向量** $v_{\pi}$:$$v_{\pi} = [v_{\pi}(s_1), v_{\pi}(s_2), \dots, v_{\pi}(s_n)]^T$$
 2. **期望即时奖励向量** $r_{\pi}$:
     其中第 $i$ 个元素为 $r_{\pi}(s_i) = \sum_a \pi(a|s_i) \sum_r p(r|s_i, a) r$。$r_{\pi}=[r_{\pi}(s_1), r_{\pi}(s_2), \dots, r_{\pi}(s_n)]^T$
-    
 3. **State Transition Matrix状态转移矩阵** $P_{\pi}$:
-    
     $P_{\pi} \in \mathbb{R}^{n \times n}$，其中第 $i$ 行第 $j$ 列的元素 $[P_{\pi}]_{ij} = p(s_j | s_i)$，表示在策略 $\pi$ 下从 $s_i$ 转移到 $s_j$ 的概率：
-    
     $$[P_{\pi}]_{ij} = p(s_j | s_i)= \sum_a \pi(a|s_i) p(s_j | s_i, a)$$
-    
-
 ### 4.2 矩阵方程
 
 于是，贝尔曼方程组可以优雅地写为：
@@ -157,7 +151,77 @@ $$\begin{aligned} \mathbb{E}[G_{t+1} | S_t = s] &= \sum_{s'} \left( \sum_{a} \pi
 > 
 > $$v_{\pi} = r_{\pi} + \gamma P_{\pi} v_{\pi}$$
 
----
+
+
+### 贝尔曼方程的矩阵形式详细推导
+
+> [!abstract] 推导目标
+> 
+> 我们已知针对单个状态 $s$ 的贝尔曼方程（标量形式），目标是将其转化为适用于所有状态 $s_1, \dots, s_n$ 的统一矩阵形式：$$v_{\pi} = r_{\pi} + \gamma P_{\pi} v_{\pi}$$
+
+#### 第一步：回顾标量形式 (Scalar Form)
+
+对于任意一个特定状态 $s_i \in \mathcal{S}$，其状态价值 $v_{\pi}(s_i)$ 由两部分组成：**即时奖励的期望** 和 **未来状态价值的折扣期望**。
+根据贝尔曼方程的定义：
+
+$$v_{\pi}(s_i) = \sum_{a} \pi(a|s_i) \sum_{r} p(r|s_i, a) r + \gamma \sum_{a} \pi(a|s_i) \sum_{s_j} p(s_j|s_i, a) v_{\pi}(s_j)$$
+这个公式看起来很长，我们先定义两个辅助项来简化它。
+##### 1. 定义期望即时奖励 $r_{\pi}(s_i)$
+把公式的第一部分提取出来，定义为“在状态 $s_i$ 下遵循策略 $\pi$ 能获得的平均奖励”：
+$$r_{\pi}(s_i) \triangleq \sum_{a} \pi(a|s_i) \sum_{r} p(r|s_i, a) r$$
+##### 2. 定义状态转移概率 $p_{\pi}(s_j | s_i)$
+把公式第二部分中的概率项合并。我们需要算出“在策略 $\pi$ 下，从 $s_i$ 转移到 $s_j$ 的总概率”（消掉了动作 $a$）：
+$$p_{\pi}(s_j | s_i) \triangleq \sum_{a} \pi(a|s_i) p(s_j|s_i, a)$$
+> [!math] 简化后的标量方程
+> 
+> 将上述两项代回原方程，我们得到一个更干净的形式：
+> 
+> $$v_{\pi}(s_i) = r_{\pi}(s_i) + \gamma \sum_{s_j \in \mathcal{S}} p_{\pi}(s_j | s_i) v_{\pi}(s_j)$$
+> 
+> _解读：状态 $i$ 的价值 = 状态 $i$ 的平均奖励 + $\gamma \times$ (从 $i$ 跳到所有可能的 $j$ 的加权平均价值)。_
+
+#### 第二步：展开联立方程组 (System of Equations)
+
+假设状态空间共有 $n$ 个状态：$\mathcal{S} = \{s_1, s_2, \dots, s_n\}$。
+对于每一个状态，都存在一个上述的标量方程。我们将这 $n$ 个方程全部列出来：
+
+$$\begin{cases} \text{状态 } s_1: \quad v_{\pi}(s_1) = r_{\pi}(s_1) + \gamma \left[ p_{\pi}(s_1|s_1)v_{\pi}(s_1) + p_{\pi}(s_2|s_1)v_{\pi}(s_2) + \dots + p_{\pi}(s_n|s_1)v_{\pi}(s_n) \right] \\ \text{状态 } s_2: \quad v_{\pi}(s_2) = r_{\pi}(s_2) + \gamma \left[ p_{\pi}(s_1|s_2)v_{\pi}(s_1) + p_{\pi}(s_2|s_2)v_{\pi}(s_2) + \dots + p_{\pi}(s_n|s_2)v_{\pi}(s_n) \right] \\ \vdots \\ \text{状态 } s_n: \quad v_{\pi}(s_n) = r_{\pi}(s_n) + \gamma \left[ p_{\pi}(s_1|s_n)v_{\pi}(s_1) + p_{\pi}(s_2|s_n)v_{\pi}(s_2) + \dots + p_{\pi}(s_n|s_n)v_{\pi}(s_n) \right] \end{cases}$$
+
+> [!important] 观察结构
+> 
+> 注意方括号 `[...]` 中的内容。每一行实际上是 **概率向量** 与 **价值向量** 的 **内积 (Dot Product)**。
+> 
+> 例如第一行括弧内等于：$[p_{\pi}(s_1|s_1), \dots, p_{\pi}(s_n|s_1)] \cdot [v_{\pi}(s_1), \dots, v_{\pi}(s_n)]^T$。
+
+#### 第三步：向量与矩阵化 (Matrixification)
+现在我们将上述方程组转化为矩阵形式。
+##### 1. 定义向量
+
+我们将所有的 $v_{\pi}(s_i)$ 和 $r_{\pi}(s_i)$ 堆叠成列向量：
+$$v_{\pi} = \begin{bmatrix} v_{\pi}(s_1) \\ v_{\pi}(s_2) \\ \vdots \\ v_{\pi}(s_n) \end{bmatrix}, \quad r_{\pi} = \begin{bmatrix} r_{\pi}(s_1) \\ r_{\pi}(s_2) \\ \vdots \\ r_{\pi}(s_n) \end{bmatrix}$$
+##### 2. 定义状态转移矩阵 (State Transition Matrix) $P_{\pi}$
+
+这是最关键的一步。我们将所有的 $p_{\pi}(s_j|s_i)$ 排列成一个 $n \times n$ 的矩阵。
+**注意下标的顺序**：第 $i$ 行 第 $j$ 列表示从 $s_i$ 到 $s_j$ 的概率。
+$$P_{\pi} = \begin{bmatrix} p_{\pi}(s_1|s_1) & p_{\pi}(s_2|s_1) & \dots & p_{\pi}(s_n|s_1) \\ p_{\pi}(s_1|s_2) & p_{\pi}(s_2|s_2) & \dots & p_{\pi}(s_n|s_2) \\ \vdots & \vdots & \ddots & \vdots \\ p_{\pi}(s_1|s_n) & p_{\pi}(s_2|s_n) & \dots & p_{\pi}(s_n|s_n) \end{bmatrix}$$
+
+> [!note] 性质
+> 
+> 矩阵 $P_{\pi}$ 是一个 **随机矩阵 (Stochastic Matrix)**，其每一行的元素之和必须为 1（因为从状态 $s_i$ 出发，必定会转移到某个状态）。
+
+##### 3. 组装公式
+
+现在，让我们计算矩阵乘法 $P_{\pi} v_{\pi}$：
+
+$$P_{\pi} v_{\pi} = \begin{bmatrix} p_{\pi}(s_1|s_1) & \dots & p_{\pi}(s_n|s_1) \\ \vdots & \ddots & \vdots \\ p_{\pi}(s_1|s_n) & \dots & p_{\pi}(s_n|s_n) \end{bmatrix} \begin{bmatrix} v_{\pi}(s_1) \\ \vdots \\ v_{\pi}(s_n) \end{bmatrix} = \begin{bmatrix} \sum_{j=1}^n p_{\pi}(s_j|s_1) v_{\pi}(s_j) \\ \vdots \\ \sum_{j=1}^n p_{\pi}(s_j|s_n) v_{\pi}(s_j) \end{bmatrix}$$
+
+你会发现，**结果向量的第 $i$ 个元素，正是我们在前面提到方程组中方括号里的内容！**
+因此，整个方程组可以写成：
+
+$$\underbrace{\begin{bmatrix} v_{\pi}(s_1) \\ \vdots \\ v_{\pi}(s_n) \end{bmatrix}}_{v_{\pi}} = \underbrace{\begin{bmatrix} r_{\pi}(s_1) \\ \vdots \\ r_{\pi}(s_n) \end{bmatrix}}_{r_{\pi}} + \gamma \underbrace{\begin{bmatrix} \sum p(s_j|s_1)v(s_j) \\ \vdots \\ \sum p(s_j|s_n)v(s_j) \end{bmatrix}}_{P_{\pi} v_{\pi}}$$
+
+即：
+$$v_{\pi} = r_{\pi} + \gamma P_{\pi} v_{\pi}$$
 
 ## 5. 求解状态价值 (Solving State Values)
 
