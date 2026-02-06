@@ -3,7 +3,7 @@ date: 2026-02-05
 tags:
   - 强化学习
 ---
-
+ 
 # Chapter 4: 值迭代与策略迭代 (Value Iteration & Policy Iteration)
 
 > [!abstract] 核心目标
@@ -54,7 +54,6 @@ $$v_{k+1} = f(v_k) = \max_{\pi} (r_{\pi} + \gamma P_{\pi} v_k), \quad k=0,1,2,\d
 > 这一步本质上是在问：如果下一时刻的状态价值是 $v_k$，我现在应该选哪个动作能获得最大的期望回报？
     
 2. **值更新 (Value Update)**：
-    
     使用刚才找到的策略 $\pi_{k+1}$ 来更新 $v_{k+1}$：$$v_{k+1} = r_{\pi_{k+1}} + \gamma P_{\pi_{k+1}} v_k$$
 ### 1.3 逐元素形式 (Elementwise Form) - 实现细节
 
@@ -186,12 +185,9 @@ $$\pi_0 \xrightarrow{PE} v_{\pi_0} \xrightarrow{PI} \pi_1 \xrightarrow{PE} v_{\p
 对比 VI 和 PI，我们会发现：
 
 - **VI (Value Iteration)**：每步只做 **1次** 迭代来更新值 ($v_{k+1} = \max \dots$)。这相当于在 PE 阶段只迭代了一次。
-    
 - **PI (Policy Iteration)**：每步要做 **无穷次** 迭代直到算出精确的 $v_{\pi_k}$。
-    
 
 **截断策略迭代** 是两者的折中：在策略评估 (PE) 阶段，我们不需要完全解出 $v_{\pi_k}$，也不像 VI 那样只迭代一次，而是迭代固定次数（或直到满足某个宽松的收敛标准）。
-
 ### 3.2 算法比较表
 
 |**算法**|**PE 阶段迭代次数**|**计算成本/步**|**收敛所需步数**|
@@ -203,21 +199,13 @@ $$\pi_0 \xrightarrow{PE} v_{\pi_0} \xrightarrow{PI} \pi_1 \xrightarrow{PE} v_{\p
 ### 3.3 实现细节
 
 算法结构如下：
-
 1. **外层循环 ($k$)**：策略更新。
-    
     - **内层循环 ($j$)**：策略评估 (PE)。
-        
         - 设定 $v^{(0)} = v_{k-1}$ (继承上一步的值，利用 **Bootstrapping**)。
-            
         - 执行 $j_{truncate}$ 次：$v^{(j+1)} = r_{\pi_k} + \gamma P_{\pi_k} v^{(j)}$。
-            
         - 令 $v_k = v^{(j_{truncate})}$。
-            
     - **策略改进 (PI)**：
-        
         - $\pi_{k+1} = \arg \max_{\pi} (r_{\pi} + \gamma P_{\pi} v_k)$。
-            
 
 > [!example] 直觉理解
 > 
@@ -235,11 +223,8 @@ $$\pi_0 \xrightarrow{PE} v_{\pi_0} \xrightarrow{PI} \pi_1 \xrightarrow{PE} v_{\p
 ## 4. 总结与核心结论
 
 1. **收敛性**：这三种算法最终都会收敛到最优状态值 $v^*$ 和最优策略 $\pi^*$。
-    
 2. **通用性**：它们都属于 **广义策略迭代 (Generalized Policy Iteration, GPI)** 的范畴——即“评估值”和“改进策略”两个过程交替进行。
-    
 3. **模型依赖**：这些算法都需要已知 $p(r|s,a)$ 和 $p(s'|s,a)$，因此它们属于 **动态规划 (Dynamic Programming)** 方法，而非这类不需要模型的强化学习（如 Q-Learning）。
-    
 
 > [!math] 关键公式速查
 > 
