@@ -3,7 +3,7 @@ date: 2026-02-05
 tags:
   - 强化学习
 ---
- 
+ ![[Chapter_4.pdf]]
 # Chapter 4: 值迭代与策略迭代 (Value Iteration & Policy Iteration)
 
 > [!abstract] 核心目标
@@ -195,7 +195,7 @@ $$\pi_0 \xrightarrow{PE} v_{\pi_0} \xrightarrow{PI} \pi_1 \xrightarrow{PE} v_{\p
 |**值迭代 (VI)**|1 次|低|多|
 |**策略迭代 (PI)**|$\infty$ (直至收敛)|高|少|
 |**截断策略迭代**|$j_{truncate}$ (如 10 次)|中|中|
-
+![[Pasted image 20260207015244.png]]
 ### 3.3 实现细节
 
 算法结构如下：

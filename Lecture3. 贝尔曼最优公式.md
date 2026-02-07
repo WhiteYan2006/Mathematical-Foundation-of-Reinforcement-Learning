@@ -3,6 +3,7 @@ date: 2026-01-29
 tags:
   - 强化学习
 ---
+![[Chapter_3.pdf]]
 # 第三章：贝尔曼最优方程 (Bellman Optimality Equation)
 
 > [!info] 章节导读
