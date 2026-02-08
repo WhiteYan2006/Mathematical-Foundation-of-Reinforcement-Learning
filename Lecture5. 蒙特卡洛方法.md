@@ -3,7 +3,7 @@ date: 2026-02-07
 tags:
   - 强化学习
 ---
-
+![[Chapter_5.pdf]]
 
 # 第五章：蒙特卡洛方法 (Monte Carlo Methods)
 
